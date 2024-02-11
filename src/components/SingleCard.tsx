@@ -1,11 +1,10 @@
-import { ReactNode } from 'react';
 
 interface ISingleCard {
   card: {
     src: string;
     matched: boolean;
   };
-  handleChoice(): void;
+  handleChoice: any;
   flipped: boolean;
   disabled: boolean;
 }

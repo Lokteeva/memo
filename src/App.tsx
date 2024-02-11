@@ -34,7 +34,7 @@ const cardImages: ICard[] = [
 
 
 function App() {
-  const [cards, setCards] = useState<ICard[]>([]);
+  const [cards, setCards] = useState<any>([]);
   const [turns, setTurns] = useState(0);
   const [choiceOne, setChoiceOne] = useState<any>(null);
   const [choiceTwo, setChoiceTwo] = useState<any>(null);
@@ -61,8 +61,8 @@ function App() {
     setDisabled(true)
 
       if (choiceOne.src === choiceTwo.src) {
-        setCards((prevCards) => {
-          return prevCards.map((card) => {
+        setCards((prevCards: any) => {
+          return prevCards.map((card: any) => {
             if (card.src === choiceOne.src) {
               return { ...card, matched: true };
             } else {
@@ -72,7 +72,7 @@ function App() {
         });
         resetTurn();
       } else {
-        setTimeout(() => resetTurn(), 1000);
+        setTimeout(() => resetTurn(), 1500);
       }
     }
   }, [choiceOne, choiceTwo]);
@@ -96,7 +96,7 @@ function App() {
       <button className='button' onClick={shuffleCards}>Новая игра</button>
 
       <div className="card-grid">
-        {cards.map((card) => (
+        {cards.map((card: any) => (
           <SingleCard key={card.id} card={card} handleChoice={handleChoice} 
           flipped={card === choiceOne || card === choiceTwo || card.matched}
           disabled={disabled}
