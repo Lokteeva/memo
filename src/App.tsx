@@ -1,35 +1,111 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import './App.css';
+import SingleCard from './components/SingleCard';
+
+interface ICard {
+  src: string;
+  matched: boolean;
+  id?: string;
+  handleChoice?: any;
+}
+
+const cardImages: ICard[] = [
+  { src: '/img/1.jpg', matched: false },
+  { src: '/img/2.jpg', matched: false },
+  { src: '/img/3.jpg', matched: false },
+  { src: '/img/4.jpg', matched: false },
+  { src: '/img/5.jpg', matched: false },
+  { src: '/img/6.jpg', matched: false },
+  { src: '/img/7.jpg', matched: false },
+  { src: '/img/8.jpg', matched: false },
+  { src: '/img/9.jpg', matched: false },
+  { src: '/img/10.jpg', matched: false },
+  { src: '/img/11.jpg', matched: false },
+  { src: '/img/12.jpg', matched: false },
+  { src: '/img/13.jpg', matched: false },
+  { src: '/img/14.jpg', matched: false },
+  { src: '/img/15.jpg', matched: false },
+  { src: '/img/16.jpg', matched: false },
+  { src: '/img/17.jpg', matched: false },
+  { src: '/img/18.jpg', matched: false },
+  { src: '/img/19.jpg', matched: false },
+  { src: '/img/20.jpg', matched: false },
+];
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [cards, setCards] = useState<ICard[]>([]);
+  const [turns, setTurns] = useState(0);
+  const [choiceOne, setChoiceOne] = useState<any>(null);
+  const [choiceTwo, setChoiceTwo] = useState<any>(null);
+  const [disabled, setDisabled] = useState<boolean>(false)
+
+  const shuffleCards = () => {
+    const shuffledCards = [...cardImages, ...cardImages]
+      .sort(() => Math.random() - 0.5)
+      .map((card) => ({ ...card, id: Math.random() }));
+
+    setChoiceOne(null)  
+    setChoiceTwo(null)  
+    setCards(shuffledCards);
+    setTurns(0);
+  };
+
+  // handle a choice
+  const handleChoice = (card:ICard[]): any =>  {
+    choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
+  };
+
+  useEffect(() => {
+    if (choiceOne && choiceTwo) {
+    setDisabled(true)
+
+      if (choiceOne.src === choiceTwo.src) {
+        setCards((prevCards) => {
+          return prevCards.map((card) => {
+            if (card.src === choiceOne.src) {
+              return { ...card, matched: true };
+            } else {
+              return card;
+            }
+          });
+        });
+        resetTurn();
+      } else {
+        setTimeout(() => resetTurn(), 1000);
+      }
+    }
+  }, [choiceOne, choiceTwo]);
+
+  console.log(cards);
+
+  const resetTurn = () => {
+    setChoiceOne(null);
+    setChoiceTwo(null);
+    setTurns((prevTurns) => prevTurns + 1);
+    setDisabled(false)
+  };
+
+  useEffect(()=>{
+    shuffleCards()
+  }, [])
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <h1>Hello memo</h1>
+      <button className='button' onClick={shuffleCards}>Новая игра</button>
+
+      <div className="card-grid">
+        {cards.map((card) => (
+          <SingleCard key={card.id} card={card} handleChoice={handleChoice} 
+          flipped={card === choiceOne || card === choiceTwo || card.matched}
+          disabled={disabled}
+          />
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <p>Количество ходов: {turns}</p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
